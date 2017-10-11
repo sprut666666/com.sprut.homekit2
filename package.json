@@ -1,0 +1,14 @@
+{
+  "name": "com.sprut.homekit",
+  "version": "2.0.2",
+  "description": "Homekit app for Homey",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sprut",
+  "license": "ISC",
+  "dependencies": {
+    "has-node": "^0.2.5"
+  }
+}
