@@ -6,7 +6,7 @@ const debug = true;
 // process.env.DEBUG = 'TCP';
 
 const Homey = require('homey')
-const { HomeyAPI } = require('./lib/athom-api.js')
+const { HomeyAPI } = require('athom-api')
 const Homekit = require('./lib/homekit.js')
 
 

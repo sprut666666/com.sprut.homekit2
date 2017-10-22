@@ -53,7 +53,10 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 ### Changelog
 
 #### 2.0.2
-- update has-node 0.2.5
+- update athom-api@2.0.34
+
+#### 2.0.2
+- update has-node@0.2.5
 
 #### 2.0.0
 - Big update (new logic for find devices)
@@ -82,13 +85,13 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 - Critical bugfix when adding many devices
 
 #### 1.1.2
-- update has-node 0.2.3
+- update has-node@0.2.3
 
 #### 1.1.1
 - fix WindowCovering
 
 #### 1.1.0
-- update has-node 0.2.2
+- update has-node@0.2.2
 - new ColorTemperature
 - fix RGBW
 
