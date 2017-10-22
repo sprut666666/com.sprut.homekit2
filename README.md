@@ -52,7 +52,7 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
-#### 2.0.2
+#### 2.0.3
 - update athom-api@2.0.34
 
 #### 2.0.2
