@@ -1,12 +1,12 @@
 {
-  "id": "com.sprut.homekit",
+  "id": "com.sprut.homekit2",
   "sdk": 2,
   "permissions": [
     "homey:manager:api"
   ],
   "name": {
-    "en": "HomeKit",
-    "nl": "HomeKit"
+    "en": "HomeKit2",
+    "nl": "HomeKit2"
   },
   "description": {
     "en": "Homekit support for Homey",
@@ -17,7 +17,7 @@
     "nl": ["homekit", "siri", "iOS"]
   },
   "category": "appliances",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "compatibility": ">=1.5.0",
   "author": {
     "name": "Sprut",

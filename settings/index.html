@@ -170,7 +170,21 @@
               }
             }
 
+            for (let i = 0; i < this.devicesPairedUngrouped.length; i++)
+            {
+              if (this.devicesPairedUngrouped[i] && this.devicesPairedUngrouped[i].id == device.id)
+              {
+                this.devicesPairedUngrouped.splice(i, 1);
+                break;
+              }
+            }
+
             await Homey.set('pairedDevices', this.devicesPaired, (err, result) =>
+            {
+              if (err)return Homey.alert(err);
+            })
+
+            await Homey.set('pairedDevicesUngrouped', this.devicesPairedUngrouped, (err, result) =>
             {
               if (err)return Homey.alert(err);
             })

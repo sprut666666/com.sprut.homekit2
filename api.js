@@ -40,7 +40,7 @@ module.exports = [
     path: '/devices/addUngrouped',
     fn: function(args, callback)
     {
-      Homey.app.addDeviceUngrouped(args.body).then(res =>
+      Homey.app.addDevice(args.body,undefined,true).then(res =>
         {
           callback(null, true);
         })
