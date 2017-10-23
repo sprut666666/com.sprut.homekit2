@@ -1,12 +1,12 @@
 {
-  "id": "com.sprut.homekit2",
+  "id": "com.sprut.homekit",
   "sdk": 2,
   "permissions": [
     "homey:manager:api"
   ],
   "name": {
-    "en": "HomeKit2",
-    "nl": "HomeKit2"
+    "en": "HomeKit",
+    "nl": "HomeKit"
   },
   "description": {
     "en": "Homekit support for Homey",
