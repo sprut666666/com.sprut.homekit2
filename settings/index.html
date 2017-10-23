@@ -4,13 +4,11 @@
     <script src="https://unpkg.com/vue"></script>
     <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.0.4/fuse.min.js"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.4/css/bulma.min.css" integrity="sha256-cqlVHMFcSR4diUVzW7ot+yIE0EHW0jfNvRG9GVEt8pE=" crossorigin="anonymous"/>
 
   </head>
   <body style="overflow-x:hidden;">
     <div id="app" style="margin-left:15px;margin-right:20px;">
-
       <div class="tabs is-centered" style="margin-left:-10px;">
         <ul>
           <li v-bind:class="isActive('devices')">
@@ -32,6 +30,7 @@
               <small>{{device.zone.name}}</small><br/>
               <a v-if="!isAdded(device)" @click="addDevice(device)" class="button is-success is-outlined " style="margin:5px;" data-i18n="device.add">Add</a>
               <a v-if="isAdded(device)" @click="removeDevice(device)" class="button is-outlined is-danger" style="margin:5px;" data-i18n="device.delete">Delete</a>
+              <a v-if="!isAdded(device)" @click="addDeviceUngrouped(device)" class="button is-success is-outlined " style="margin:5px;" data-i18n="device.addUngrouped">Add ungrouped</a>
             </center>
           </div>
         </div>
@@ -66,107 +65,163 @@
           devices: {},
           search: '',
           devicesPaired: [],
+          devicesPairedUngrouped: [],
           currentPage: 'devices',
           log: []
         },
-        methods: {
-          getDevices() {
-            Homey.api('GET', '/devices', null, (err, result) => {
-              if (err)
-                return Homey.alert(err);
-              var array = Object.keys(result).map(function (key) {
+        methods:
+        {
+
+          getDevices()
+          {
+            Homey.api('GET', '/devices', null, (err, result) =>
+            {
+              if (err) return Homey.alert(err);
+
+              var array = Object.keys(result).map(function (key)
+              {
                 return result[key];
               });
+
               this.devices = array;
             });
           },
-          getLog() {
-            Homey.api('GET', '/log', null, (err, result) => {
-              if (err)
-                return Homey.alert(err);
+
+          getLog()
+          {
+            Homey.api('GET', '/log', null, (err, result) =>
+            {
+              if (err) return Homey.alert(err);
               this.log = result;
             });
           },
-          getPairedDevices() {
-            Homey.get('pairedDevices', (err, result) => {
-              console.log(result);
-              if (result) {
-                this.devicesPaired = result;
-              }
 
+          getPairedDevices()
+          {
+            Homey.get('pairedDevices', (err, result) =>
+            {
+              if (result) { this.devicesPaired = result;}
             });
           },
-          setPage(page) {
+
+          getPairedDevicesUngrouped()
+          {
+            Homey.get('pairedDevicesUngrouped', (err, result) =>
+            {
+              if (result) { this.devicesPairedUngrouped = result;}
+            });
+          },
+
+          setPage(page)
+          {
             this.currentPage = page;
           },
-          isActive(page) {
-            if (this.currentPage == page) {
+
+          isActive(page)
+          {
+            if (this.currentPage == page)
+            {
               return 'is-active';
-            } else {
+            } else
+            {
               return;
             }
           },
-          async addDevice(device) {
-            await console.log(device.id, device.name, device.class)
+
+          async addDevice(device)
+          {
             await this.devicesPaired.push(device);
-            await Homey.set('pairedDevices', this.devicesPaired, (err, result) => {
-              if (err)
-                return Homey.alert(err);
-              }
-            )
-            await Homey.api('PUT', '/devices/add', device, (err, result) => {
-              if (err)
-                return Homey.alert(err);
-              }
-            );
-            console.log('Device added');
+
+            await Homey.set('pairedDevices', this.devicesPaired, (err, result) =>
+            {
+              if (err) return Homey.alert(err);
+            });
+
+            await Homey.api('PUT', '/devices/add', device, (err, result) =>
+            {
+              if (err) return Homey.alert(err);
+            });
           },
-          async removeDevice(device) {
-            var i;
-            for (i = 0; i < this.devicesPaired.length; i++) {
-              if (this.devicesPaired[i] && this.devicesPaired[i].id == device.id) {
+
+          async addDeviceUngrouped(device)
+          {
+            await this.devicesPairedUngrouped.push(device);
+
+            await Homey.set('pairedDevicesUngrouped', this.devicesPairedUngrouped, (err, result) =>
+            {
+              if (err) return Homey.alert(err);
+            });
+
+            await Homey.api('PUT', '/devices/addUngrouped', device, (err, result) =>
+            {
+              if (err) return Homey.alert(err);
+            });
+          },
+
+          async removeDevice(device)
+          {
+
+            for (let i = 0; i < this.devicesPaired.length; i++)
+            {
+              if (this.devicesPaired[i] && this.devicesPaired[i].id == device.id)
+              {
                 this.devicesPaired.splice(i, 1);
+                break;
               }
             }
-            await Homey.set('pairedDevices', this.devicesPaired, (err, result) => {
-              if (err)
-                return Homey.alert(err);
-              console.log(device.name + ' removed from pairedDevices');
-            })
-            Homey.api('DELETE', '/devices/delete', device, (err, result) => {
-              if (err)
-                return Homey.alert(err);
 
-              console.log(device.name + ' removed from Homekit');
-              }
-            );
+            await Homey.set('pairedDevices', this.devicesPaired, (err, result) =>
+            {
+              if (err)return Homey.alert(err);
+            })
+
+            Homey.api('DELETE', '/devices/delete', device, (err, result) =>
+            {
+              if (err)return Homey.alert(err);
+            });
           },
-          isAdded(obj) {
-            var i;
-            for (i = 0; i < this.devicesPaired.length; i++) {
-              if (this.devicesPaired[i] && this.devicesPaired[i].id == obj.id) {
+
+          isAdded(obj)
+          {
+
+            for (let i = 0; i < this.devicesPaired.length; i++)
+            {
+              if (this.devicesPaired[i] && this.devicesPaired[i].id == obj.id)
+              {
+                return true;
+              }
+            }
+
+            for (let i = 0; i < this.devicesPairedUngrouped.length; i++)
+            {
+              if (this.devicesPairedUngrouped[i] && this.devicesPairedUngrouped[i].id == obj.id)
+              {
                 return true;
               }
             }
 
             return false;
-          },
-          filterArray(device) {
-            if (device.class == "light" || device.class == "socket" || device.class == "sensor" || device.class == "lock")
-              return device
           }
+
         },
-        mounted() {
+
+        mounted()
+        {
           this.getPairedDevices();
+          this.getPairedDevicesUngrouped();
           this.getDevices();
           this.getLog();
-          Homey.on('log.new', (res)=>{
+          Homey.on('log.new', (res)=>
+          {
             this.log = res;
           })
         },
+
         computed: {
-          filteredItems() {
-            var options = {
+          filteredItems()
+          {
+            var options =
+            {
               keys: [
                 "name", "zone.name", "class"
               ],
@@ -178,15 +233,20 @@
               maxPatternLength: 32,
               minMatchCharLength: 2
             };
+
             var fuse = new Fuse(this.devices, options);
-            if (this.search.length > 2) {
+            if (this.search.length > 2)
+            {
               return fuse.search(this.search);
-            } else {
+            } else
+            {
               return this.devices
             }
 
           },
-          reverseLog() {
+
+          reverseLog()
+          {
             return this.log.slice().reverse();
           }
         }

@@ -52,6 +52,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.0.4
+- fix & 1 step ungroup device
+
 #### 2.0.3
 - update athom-api@2.0.34
 

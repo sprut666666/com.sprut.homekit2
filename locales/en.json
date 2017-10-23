@@ -5,7 +5,8 @@
     "log": "Log"
   },
   "device": {
-    "add": "Add",
-    "delete": "Delete"
+    "add": "Add group",
+    "delete": "Delete",
+    "addUngrouped": "Add ungroup"
   }
 }

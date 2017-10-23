@@ -18,8 +18,8 @@ let allDevices = {},
 
 if (debug) {
   console.log = function(string, type) {
-    const d = new Date();
-    const n = d.toLocaleTimeString();
+    let d = new Date();
+    let n = d.toLocaleTimeString();
     let item = {};
     item.time = n;
     item.string = string;
@@ -37,14 +37,17 @@ if (debug) {
 class HomekitApp extends Homey.App
 {
   // Get homey object
-  getApi() {
+  getApi()
+  {
     if (!this.api) {
       this.api = HomeyAPI.forCurrentHomey();
     }
     return this.api;
   }
-  async getDevices() {
-    const api = await this.getApi();
+
+  async getDevices()
+  {
+    let api = await this.getApi();
     allDevices = await api.devices.getDevices();
     return allDevices;
   }
@@ -57,9 +60,9 @@ class HomekitApp extends Homey.App
   async startingServer()
   {
     // Get the homey object
-    const api = await this.getApi();
+    let api = await this.getApi();
     // Get system info
-    const systeminfo = await api.system.getInfo();
+    let systeminfo = await api.system.getInfo();
     // Subscribe to realtime events and set all devices global
     await api.devices.subscribe();
     allDevices = await api.devices.getDevices();
@@ -98,6 +101,7 @@ class HomekitApp extends Homey.App
           if (allPairedDevices[i] && allPairedDevices[i].id == device.id)
           {
             allPairedDevices.splice(i, 1);
+            break;
           }
         }
       }
@@ -135,6 +139,7 @@ class HomekitApp extends Homey.App
         {
           allPairedDevices.splice(i, 1);
           deletePairedDevices = true;
+          break;
         }
       }
 
@@ -142,16 +147,13 @@ class HomekitApp extends Homey.App
       {
         server.removeAccessory(server.config.getHASID(deviceID));
 
-         Homey.ManagerSettings.set('pairedDevices', allPairedDevices, (err, result) =>
+        Homey.ManagerSettings.set('pairedDevices', allPairedDevices, (err, result) =>
         {
-          if (err)
-            return Homey.alert(err);
+          if (err) return Homey.alert(err);
         });
 
         console.log('Delete device! => ' + deviceID, 'success');
-
       }
-
     });
 
   }
@@ -176,11 +178,24 @@ class HomekitApp extends Homey.App
 
     console.log(device.name + ' class: ' + allDevices[device.id].class, 'info');
 
-    let newDevice = await Homekit.createDevice(allDevices[device.id], server.config.getHASID(device.id));
-    await server.addAccessory(newDevice);
+    Homekit.createDevice(allDevices[device.id], server);
 
     console.log(device.name + ' is added!', 'success');
+  }
 
+  async addDeviceUngrouped(device,noCheck)
+  {
+    if (noCheck === undefined)
+    {
+        await this.getDevices();
+        console.log(device.name + ' getDevices() ', 'info');
+    }
+
+    console.log(device.name + ' class: ' + allDevices[device.id].class, 'info');
+
+    Homekit.createDevice(allDevices[device.id], server);
+
+    console.log(device.name + ' is added!', 'success');
   }
 
   async deleteDevice(device)
