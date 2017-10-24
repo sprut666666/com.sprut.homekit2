@@ -1,6 +1,6 @@
 {
   "name": "com.sprut.homekit",
-  "version": "2.0.2",
+  "version": "2.0.6",
   "description": "Homekit app for Homey",
   "main": "app.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "author": "Sprut",
   "license": "ISC",
   "dependencies": {
-    "has-node": "^0.2.5",
-    "athom-api": "^2.0.34"
+    "athom-api": "^2.0.35",
+    "has-node": "^0.2.5"
   }
 }
