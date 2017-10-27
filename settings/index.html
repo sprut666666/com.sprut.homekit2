@@ -166,6 +166,17 @@
               if (this.devicesPaired[i] && this.devicesPaired[i].id == device.id)
               {
                 this.devicesPaired.splice(i, 1);
+
+                await Homey.set('pairedDevices', this.devicesPaired, (err, result) =>
+                {
+                  if (err)return Homey.alert(err);
+                })
+
+                Homey.api('DELETE', '/devices/delete', device, (err, result) =>
+                {
+                  if (err)return Homey.alert(err);
+                });
+
                 break;
               }
             }
@@ -175,24 +186,21 @@
               if (this.devicesPairedUngrouped[i] && this.devicesPairedUngrouped[i].id == device.id)
               {
                 this.devicesPairedUngrouped.splice(i, 1);
+
+                await Homey.set('pairedDevicesUngrouped', this.devicesPairedUngrouped, (err, result) =>
+                {
+                  if (err)return Homey.alert(err);
+                })
+
+                Homey.api('DELETE', '/devices/deleteUngrouped', device, (err, result) =>
+                {
+                  if (err)return Homey.alert(err);
+                });
+
                 break;
               }
             }
 
-            await Homey.set('pairedDevices', this.devicesPaired, (err, result) =>
-            {
-              if (err)return Homey.alert(err);
-            })
-
-            await Homey.set('pairedDevicesUngrouped', this.devicesPairedUngrouped, (err, result) =>
-            {
-              if (err)return Homey.alert(err);
-            })
-
-            Homey.api('DELETE', '/devices/delete', device, (err, result) =>
-            {
-              if (err)return Homey.alert(err);
-            });
           },
 
           isAdded(obj)

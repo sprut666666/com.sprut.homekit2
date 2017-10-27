@@ -52,6 +52,10 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.0.7
+- update athom-api@2.0.50
+- add delate unGroup
+
 #### 2.0.6
 - update athom-api@2.0.35
 

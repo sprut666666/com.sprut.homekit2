@@ -62,5 +62,21 @@ module.exports = [
           callback(error, null);
         });
     }
+  },
+  {
+    method: 'DELETE',
+    path: '/devices/deleteUngrouped',
+    fn: function(args, callback)
+    {
+      console.log('API call received, trying to remove ' + args.body.name, 'info');
+      Homey.app.deleteDevice(args.body,true).then(res =>
+        {
+          callback(null, true);
+        })
+        .catch(error => {
+          console.log(err, 'error')
+          callback(error, null);
+        });
+    }
   }
 ]
