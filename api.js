@@ -28,7 +28,7 @@ module.exports = [
     path: '/devices/add',
     fn: function(args, callback)
     {
-      Homey.app.addDevice(args.body).then(res =>
+      Homey.app.addDevice(args.body.id,undefined,true,undefined).then(res =>
         {
           callback(null, true);
         })
@@ -40,7 +40,7 @@ module.exports = [
     path: '/devices/addUngrouped',
     fn: function(args, callback)
     {
-      Homey.app.addDevice(args.body,undefined,true).then(res =>
+      Homey.app.addDevice(args.body.id,undefined,false,undefined).then(res =>
         {
           callback(null, true);
         })
@@ -52,24 +52,7 @@ module.exports = [
     path: '/devices/delete',
     fn: function(args, callback)
     {
-      console.log('API call received, trying to remove ' + args.body.name, 'info');
-      Homey.app.deleteDevice(args.body).then(res =>
-        {
-          callback(null, true);
-        })
-        .catch(error => {
-          console.log(err, 'error')
-          callback(error, null);
-        });
-    }
-  },
-  {
-    method: 'DELETE',
-    path: '/devices/deleteUngrouped',
-    fn: function(args, callback)
-    {
-      console.log('API call received, trying to remove ' + args.body.name, 'info');
-      Homey.app.deleteDevice(args.body,true).then(res =>
+      Homey.app.deleteDevice(args.body.id).then(res =>
         {
           callback(null, true);
         })

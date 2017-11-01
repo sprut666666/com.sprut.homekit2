@@ -9,12 +9,7 @@ const Homey = require('homey')
 const { HomeyAPI } = require('athom-api')
 const Homekit = require('./lib/homekit.js')
 
-
-
-let allDevices = {},
-    allPairedDevices = [],
-    allPairedDevicesUngrouped = [],
-    server = {},
+let server = {},
     log = [];
 
 if (debug)
@@ -43,72 +38,74 @@ class HomekitApp extends Homey.App
   // Get homey object
   getApi()
   {
-    if (!this.api) {
-      this.api = HomeyAPI.forCurrentHomey();
-    }
+    if (!this.api) this.api = HomeyAPI.forCurrentHomey();
     return this.api;
   }
 
   async getDevices()
   {
     let api = await this.getApi();
-    allDevices = await api.devices.getDevices();
-    return allDevices;
+    return await api.devices.getDevices();
   }
 
-  getLog() {
+  getLog()
+  {
     return log;
   }
 
-  async initAllDevice(devicesForInit,namePairedDevices,unGroup)
+  async initOldStruct(newPairedDevices)
   {
-    let deviceForDel = [];
+    let allPairedDevices = await Homey.ManagerSettings.get('pairedDevices') || [];
+    let allPairedDevicesUngrouped = await Homey.ManagerSettings.get('pairedDevicesUngrouped') || [];
 
-    for (let i = 0; i < devicesForInit.length; i++)
+    if (allPairedDevices.length > 0)
     {
-      // If device has the class light
-      let device = devicesForInit[i];
-
-      if (device.id in allDevices)
+      for (let i = 0; i < allPairedDevices.length; i++)
       {
-        console.log(device.name + ' - device found.', 'info');
-        if (unGroup === undefined)
-        {
-          await this.addDevice(device,true);
-        }else
-        {
-          await this.addDevice(device,true,true);
-        }
-      }
-      else
-      {
-        console.log(device.name + ' - device not found.', 'info');
-        deviceForDel.push(device);
-      }
-    }
+        let device = allPairedDevices[i];
 
-    if (deviceForDel.length)
-    {
-      for (let i = 0; i < deviceForDel.length; i++)
-      {
-        let device = deviceForDel[i];
+        newPairedDevices[device.id] = {};
+        newPairedDevices[device.id].group = true;
+        newPairedDevices[device.id].accessory = false;
+        newPairedDevices[device.id].pairedСlass = device.class;
+        newPairedDevices[device.id].pairedCapabilities = {};
+        newPairedDevices[device.id].homeKitIDs = {};
 
-        for (let i = 0; i < devicesForInit.length; i++)
+        for (let capabilitie in device.capabilities)
         {
-          if (devicesForInit[i] && devicesForInit[i].id == device.id)
-          {
-            devicesForInit.splice(i, 1);
-            break;
-          }
+          newPairedDevices[device.id].pairedCapabilities[capabilitie] = device.capabilities[capabilitie].id;
         }
       }
 
-      await Homey.ManagerSettings.set(namePairedDevices, devicesForInit, (err, result) =>
+      Homey.ManagerSettings.set('pairedDevices', [], (err, result) =>
       {
         if (err) return Homey.alert(err);
       });
+    }
 
-      console.log('Delete paired devices! => ' + deviceForDel.length, 'success');
+    if (allPairedDevicesUngrouped.length > 0)
+    {
+      for (let i = 0; i < allPairedDevicesUngrouped.length; i++)
+      {
+        let device = allPairedDevicesUngrouped[i];
+
+        newPairedDevices[device.id] = {};
+        newPairedDevices[device.id].group = false;
+        newPairedDevices[device.id].accessory = false;
+        newPairedDevices[device.id].pairedСlass = device.class;
+        newPairedDevices[device.id].pairedCapabilities = {};
+        newPairedDevices[device.id].homeKitIDs = {};
+
+        for (let capabilitie in device.capabilities)
+        {
+          newPairedDevices[device.id].pairedCapabilities[capabilitie] = device.capabilities[capabilitie].id;
+        }
+      }
+
+      Homey.ManagerSettings.set('pairedDevicesUngrouped', [], (err, result) =>
+      {
+        if (err) return Homey.alert(err);
+      });
     }
   }
 
@@ -121,57 +118,97 @@ class HomekitApp extends Homey.App
     let systeminfo = await api.system.getInfo();
     // Subscribe to realtime events and set all devices global
     await api.devices.subscribe();
-    allDevices = await api.devices.getDevices();
 
     server = await Homekit.configServer(systeminfo);
 
-    // Loop all devices
-    allPairedDevices = await Homey.ManagerSettings.get('pairedDevices') || [];
-    await this.initAllDevice(allPairedDevices,'pairedDevices');
+    let newPairedDevices = await Homey.ManagerSettings.get('newPairedDevices') || {};
+    await this.initOldStruct(newPairedDevices);
 
-    allPairedDevicesUngrouped = await Homey.ManagerSettings.get('pairedDevicesUngrouped') || [];
-    await this.initAllDevice(allPairedDevicesUngrouped,'pairedDevicesUngrouped',true);
-
-
-    if(allPairedDevices.length || allPairedDevicesUngrouped.length)
+    let deviceForDel = [];
+    let allDevices = await this.getDevices();
+    for (let device in newPairedDevices)
     {
-      await console.log('Added all devices..done here!', 'success');
-    }
-    else{
-      await console.log('No devices found...', 'info');
+      if (device in allDevices)
+      {
+        console.log(device + ' - device found.', 'info');
+        let checkDevice = allDevices[device];
+        let pairedDevice = newPairedDevices[device];
+        let addDevice = true;
+
+        if (checkDevice.class != pairedDevice.pairedСlass)
+        {
+          console.log(device + ' - class change.', 'info');
+          deviceForDel.push(device);
+          addDevice = false;
+        }
+        else
+        {
+          for (let capabilitie in pairedDevice.pairedCapabilities)
+          {
+            if (capabilitie in checkDevice.capabilities)
+            {
+              if (checkDevice.capabilities[capabilitie].id != pairedDevice.pairedCapabilities[capabilitie])
+              {
+                console.log(device + ' - capabilitie ID change.', 'info');
+                deviceForDel.push(device);
+                addDevice = false;
+              }
+            }else
+            {
+              console.log(device + ' - capabilitie change.', 'info');
+              deviceForDel.push(device);
+              addDevice = false;
+            }
+          }
+
+          for (let capabilitie in checkDevice.capabilities)
+          {
+            if (capabilitie in pairedDevice.pairedCapabilities == false)
+            {
+              console.log(device + ' - capabilitie change.', 'info');
+              deviceForDel.push(device);
+              addDevice = false;
+            }
+          }
+        }
+
+        if (addDevice)
+        {
+          await this.addDevice(device, allDevices, newPairedDevices[device].group, newPairedDevices);
+        }
+      }
+      else
+      {
+        console.log(device + ' - device not found.', 'info');
+        deviceForDel.push(device);
+      }
     }
 
+    if (deviceForDel.length)
+    {
+      for (let i = 0; i < deviceForDel.length; i++)
+      {
+        delete newPairedDevices[deviceForDel[i]];
+      }
+    }
+
+    Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
+    {
+      if (err) return Homey.alert(err);
+    });
+
+    console.log(newPairedDevices, 'success');
     // Start the server
     server.startServer();
-
     console.log('Homekit server started.', 'success');
 
     api.devices.on('device.delete', deviceID =>
     {
-      allPairedDevices = Homey.ManagerSettings.get('pairedDevices') || [];
+      let newPairedDevices = Homey.ManagerSettings.get('newPairedDevices') || {};
 
-      let deletePairedDevices = false;
-
-      for (let i = 0; i < allPairedDevices.length; i++)
+      if (deviceID in newPairedDevices)
       {
-        if (allPairedDevices[i] && allPairedDevices[i].id == deviceID)
-        {
-          allPairedDevices.splice(i, 1);
-          deletePairedDevices = true;
-          break;
-        }
-      }
-
-      if (deletePairedDevices)
-      {
-        server.removeAccessory(server.config.getHASID(deviceID));
-
-        Homey.ManagerSettings.set('pairedDevices', allPairedDevices, (err, result) =>
-        {
-          if (err) return Homey.alert(err);
-        });
-
-        console.log('Delete device! => ' + deviceID, 'success');
+        this.deleteDevice(deviceID, false);
       }
     });
 
@@ -187,80 +224,52 @@ class HomekitApp extends Homey.App
 
 
 
-  async addDevice(device,noCheck,unGroup)
+  async addDevice(device, allDevices, unGroup, newPairedDevices)
   {
-    if (noCheck === undefined)
+    console.log(device + ' is start added!', 'success');
+    if (allDevices === undefined) allDevices = await this.getDevices();
+    if (newPairedDevices === undefined)
     {
-        await this.getDevices();
-        console.log(device.name + ' getDevices() ', 'info');
+      newPairedDevices = await Homey.ManagerSettings.get('newPairedDevices') || {};
+      await Homekit.createDevice(allDevices[device], server, unGroup, newPairedDevices);
+
+      Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
+      {
+        if (err) return Homey.alert(err);
+      });
+    } else
+    {
+      await Homekit.createDevice(allDevices[device], server, unGroup, newPairedDevices);
     }
-
-    console.log(device.name + ' class: ' + allDevices[device.id].class, 'info');
-
-    if (unGroup == true)
-    {
-      await Homekit.createDevice(allDevices[device.id], server, true);
-    }else
-    {
-      await Homekit.createDevice(allDevices[device.id], server);
-    }
-
-    console.log(device.name + ' is added!', 'success');
+    console.log(device + ' is added!', 'success');
   }
 
 
-  async deleteDevice(device,unGroup)
+  async deleteDevice(device, deviceExist)
   {
-    console.log('Trying to remove device ' + device.id, "info");
+    console.log('Trying to remove device ' + device, "info");
 
-    allDevices[device.id].removeAllListeners('$state');
-
-    if (unGroup)
+    if (deviceExist === undefined)
     {
-      for (let key in device.capabilities)
-    	{
-        switch (device.capabilities[key].id)
-        {
-          case 'onoff':
-          case 'locked':
-          case 'measure_co2':
-          case 'measure_battery':
-          case 'speaker_playing':
-          case 'target_temperature':
-          case 'volume_set':
-          case 'vacuumcleaner_state':
-          case 'alarm_generic':
-          case 'alarm_water':
-          case 'alarm_smoke':
-          case 'measure_aqi':
-          case 'alarm_contact':
-          case 'alarm_motion':
-          case 'measure_humidity':
-          case 'measure_luminance':
-          case 'alarm_tamper':
-          case 'button':
-          case 'speaker_next':
-          case 'speaker_prev':
-            server.removeAccessory(server.config.getHASID(device.id + key));
-          break;
-          case 'measure_temperature':
-            if (device.class != 'thermostat')server.removeAccessory(server.config.getHASID(device.id + key));
-          break;
-          case 'windowcoverings_state':
-            if ('dim' in device.capabilities == false)server.removeAccessory(server.config.getHASID(device.id + key));
-          break;
-          case 'dim':
-            if (device.class == 'windowcoverings')server.removeAccessory(server.config.getHASID(device.id + key));
-          break;
-        }
-      }
-    }
-    else
-    {
-      server.removeAccessory(server.config.getHASID(device.id));
+      let allDevices = await this.getDevices();
+      allDevices[device].removeAllListeners('$state');
     }
 
-    console.log(device.name + ' is removed!', 'success');
+    let newPairedDevices = await Homey.ManagerSettings.get('newPairedDevices') || {};
+    for (let ID in newPairedDevices[device].homeKitIDs)
+    {
+      server.removeAccessory(ID);
+    }
+
+    delete newPairedDevices[device];
+
+    Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
+    {
+      if (err) return Homey.alert(err);
+    });
+
+    console.log(device + ' is removed!', 'success');
+
   }
 
 }

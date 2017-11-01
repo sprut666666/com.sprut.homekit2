@@ -28,9 +28,10 @@
               <img :src="device.icon" style="height:30px;width:auto;"/><br/>
               <b>{{device.name}}</b><br/>
               <small>{{device.zone.name}}</small><br/>
+              <small>{{device.id}}</small><br/>
               <a v-if="!isAdded(device)" @click="addDevice(device)" class="button is-success is-outlined " style="margin:5px;" data-i18n="device.add">Add</a>
-              <a v-if="isAdded(device)" @click="removeDevice(device)" class="button is-outlined is-danger" style="margin:5px;" data-i18n="device.delete">Delete</a>
               <a v-if="!isAdded(device)" @click="addDeviceUngrouped(device)" class="button is-success is-outlined " style="margin:5px;" data-i18n="device.addUngrouped">Add ungrouped</a>
+              <a v-if="isAdded(device)" @click="removeDevice(device)" class="button is-outlined is-danger" style="margin:5px;" data-i18n="device.delete">Delete</a>
             </center>
           </div>
         </div>
@@ -63,9 +64,8 @@
         el: '#app',
         data: {
           devices: {},
+          newPairedDevices: {},
           search: '',
-          devicesPaired: [],
-          devicesPairedUngrouped: [],
           currentPage: 'devices',
           log: []
         },
@@ -98,17 +98,9 @@
 
           getPairedDevices()
           {
-            Homey.get('pairedDevices', (err, result) =>
+            Homey.get('newPairedDevices', (err, result) =>
             {
-              if (result) { this.devicesPaired = result;}
-            });
-          },
-
-          getPairedDevicesUngrouped()
-          {
-            Homey.get('pairedDevicesUngrouped', (err, result) =>
-            {
-              if (result) { this.devicesPairedUngrouped = result;}
+              if (result) this.newPairedDevices = result;
             });
           },
 
@@ -130,9 +122,19 @@
 
           async addDevice(device)
           {
-            await this.devicesPaired.push(device);
+            this.newPairedDevices[device.id] = {};
+            this.newPairedDevices[device.id].group = true;
+            this.newPairedDevices[device.id].accessory = false;
+            this.newPairedDevices[device.id].pairedСlass = device.class;
+            this.newPairedDevices[device.id].pairedCapabilities = {};
+            this.newPairedDevices[device.id].homeKitIDs = {};
 
-            await Homey.set('pairedDevices', this.devicesPaired, (err, result) =>
+            for (let capabilitie in device.capabilities)
+            {
+              this.newPairedDevices[device.id].pairedCapabilities[capabilitie] = device.capabilities[capabilitie].id;
+            }
+
+            await Homey.set('newPairedDevices', this.newPairedDevices, (err, result) =>
             {
               if (err) return Homey.alert(err);
             });
@@ -141,13 +143,27 @@
             {
               if (err) return Homey.alert(err);
             });
+
+            this.getPairedDevices();
+
           },
 
           async addDeviceUngrouped(device)
           {
-            await this.devicesPairedUngrouped.push(device);
 
-            await Homey.set('pairedDevicesUngrouped', this.devicesPairedUngrouped, (err, result) =>
+            this.newPairedDevices[device.id] = {};
+            this.newPairedDevices[device.id].group = false;
+            this.newPairedDevices[device.id].accessory = false;
+            this.newPairedDevices[device.id].pairedСlass = device.class;
+            this.newPairedDevices[device.id].pairedCapabilities = {};
+            this.newPairedDevices[device.id].homeKitIDs = {};
+
+            for (let capabilitie in device.capabilities)
+            {
+              this.newPairedDevices[device.id].pairedCapabilities[capabilitie] = device.capabilities[capabilitie].id;
+            }
+
+            await Homey.set('newPairedDevices', this.newPairedDevices, (err, result) =>
             {
               if (err) return Homey.alert(err);
             });
@@ -156,72 +172,23 @@
             {
               if (err) return Homey.alert(err);
             });
+
+            this.getPairedDevices();
+
           },
 
           async removeDevice(device)
           {
-
-            for (let i = 0; i < this.devicesPaired.length; i++)
+            Homey.api('DELETE', '/devices/delete', device, (err, result) =>
             {
-              if (this.devicesPaired[i] && this.devicesPaired[i].id == device.id)
-              {
-                this.devicesPaired.splice(i, 1);
-
-                await Homey.set('pairedDevices', this.devicesPaired, (err, result) =>
-                {
-                  if (err)return Homey.alert(err);
-                })
-
-                Homey.api('DELETE', '/devices/delete', device, (err, result) =>
-                {
-                  if (err)return Homey.alert(err);
-                });
-
-                break;
-              }
-            }
-
-            for (let i = 0; i < this.devicesPairedUngrouped.length; i++)
-            {
-              if (this.devicesPairedUngrouped[i] && this.devicesPairedUngrouped[i].id == device.id)
-              {
-                this.devicesPairedUngrouped.splice(i, 1);
-
-                await Homey.set('pairedDevicesUngrouped', this.devicesPairedUngrouped, (err, result) =>
-                {
-                  if (err)return Homey.alert(err);
-                })
-
-                Homey.api('DELETE', '/devices/deleteUngrouped', device, (err, result) =>
-                {
-                  if (err)return Homey.alert(err);
-                });
-
-                break;
-              }
-            }
-
+              if (err) return Homey.alert(err);
+              this.getPairedDevices();
+            });
           },
 
           isAdded(obj)
           {
-
-            for (let i = 0; i < this.devicesPaired.length; i++)
-            {
-              if (this.devicesPaired[i] && this.devicesPaired[i].id == obj.id)
-              {
-                return true;
-              }
-            }
-
-            for (let i = 0; i < this.devicesPairedUngrouped.length; i++)
-            {
-              if (this.devicesPairedUngrouped[i] && this.devicesPairedUngrouped[i].id == obj.id)
-              {
-                return true;
-              }
-            }
-
+            if (obj.id in this.newPairedDevices) return true;
             return false;
           }
 
@@ -230,12 +197,15 @@
         mounted()
         {
           this.getPairedDevices();
-          this.getPairedDevicesUngrouped();
           this.getDevices();
           this.getLog();
           Homey.on('log.new', (res)=>
           {
             this.log = res;
+          })
+          Homey.on('updateDevices', (res)=>{
+            this.getDevices();
+            this.getPairedDevices();
           })
         },
 
