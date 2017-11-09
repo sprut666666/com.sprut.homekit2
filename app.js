@@ -1,6 +1,7 @@
 "use strict";
 
 const debug = true;
+const fs = require('fs');
 
 // Enable TCP debug
 // process.env.DEBUG = 'TCP';
@@ -201,6 +202,8 @@ class HomekitApp extends Homey.App
     // Start the server
     server.startServer();
     console.log('Homekit server started.', 'success');
+
+    console.log('homey.json = ' + fs.readFileSync('../userdata/homey.json', "utf8") , 'success');
 
     api.devices.on('device.delete', deviceID =>
     {
