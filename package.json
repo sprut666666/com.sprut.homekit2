@@ -9,7 +9,7 @@
   "author": "Sprut",
   "license": "ISC",
   "dependencies": {
-    "athom-api": "^2.0.62",
-    "has-node": "^0.2.8"
+    "athom-api": "^2.0.71",
+    "has-node": "^0.3.1"
   }
 }

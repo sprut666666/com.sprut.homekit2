@@ -262,6 +262,9 @@ class HomekitApp extends Homey.App
     for (let ID in newPairedDevices[device].homeKitIDs)
     {
       server.removeAccessory(ID);
+      server.config.resetHASID(newPairedDevices[device].homeKitIDs[ID]);
+      //console.log('ID remove in HomeKit ' + ID, "info");
+      //console.log('UUID remove in HomeKit ' + newPairedDevices[device].homeKitIDs[ID], "info");
     }
 
     delete newPairedDevices[device];
