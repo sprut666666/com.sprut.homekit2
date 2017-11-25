@@ -1,6 +1,6 @@
 "use strict";
 
-const debug = true;
+const debug = false;
 const fs = require('fs');
 
 // Enable TCP debug
@@ -193,7 +193,7 @@ class HomekitApp extends Homey.App
       }
     }
 
-    Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
+    await Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
     {
       if (err) return Homey.alert(err);
     });
@@ -236,7 +236,7 @@ class HomekitApp extends Homey.App
       newPairedDevices = await Homey.ManagerSettings.get('newPairedDevices') || {};
       await Homekit.createDevice(allDevices[device], server, unGroup, newPairedDevices);
 
-      Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
+      await Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
       {
         if (err) return Homey.alert(err);
       });
@@ -255,21 +255,24 @@ class HomekitApp extends Homey.App
     if (deviceExist === undefined)
     {
       let allDevices = await this.getDevices();
-      allDevices[device].removeAllListeners('$state');
+      await allDevices[device].removeAllListeners('$state');
     }
+
+    //console.log('homey.json = ' + fs.readFileSync('../userdata/homey.json', "utf8") , 'success');
 
     let newPairedDevices = await Homey.ManagerSettings.get('newPairedDevices') || {};
     for (let ID in newPairedDevices[device].homeKitIDs)
     {
-      server.removeAccessory(ID);
-      server.config.resetHASID(newPairedDevices[device].homeKitIDs[ID]);
+      await server.removeAccessory(ID);
+      await server.config.resetHASID(newPairedDevices[device].homeKitIDs[ID]);
       //console.log('ID remove in HomeKit ' + ID, "info");
       //console.log('UUID remove in HomeKit ' + newPairedDevices[device].homeKitIDs[ID], "info");
     }
+    //console.log('homey.json = ' + fs.readFileSync('../userdata/homey.json', "utf8") , 'success');
 
     delete newPairedDevices[device];
 
-    Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
+    await Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
     {
       if (err) return Homey.alert(err);
     });
