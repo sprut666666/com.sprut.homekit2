@@ -52,6 +52,11 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.1.7
+- now lux can be equal to 0
+- now temperature can be equal to -100
+- now target temperature synch min & max value
+
 #### 2.1.6
 - update has-node@0.3.3
 
