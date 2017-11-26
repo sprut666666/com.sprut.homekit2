@@ -52,6 +52,11 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.1.8
+- fix thermostat_mode
+- fix fast add/delete
+- checking for incorrect values
+
 #### 2.1.7
 - now lux can be equal to 0
 - now temperature can be equal to -100

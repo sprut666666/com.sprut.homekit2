@@ -29,9 +29,13 @@
               <b>{{device.name}}</b><br/>
               <small>{{device.zone.name}}</small><br/>
               <small>{{device.id}}</small><br/>
-              <a v-if="!isAdded(device)" @click="addDevice(device)" class="button is-success is-outlined " style="margin:5px;" data-i18n="device.add">Add</a>
-              <a v-if="!isAdded(device)" @click="addDeviceUngrouped(device)" class="button is-success is-outlined " style="margin:5px;" data-i18n="device.addUngrouped">Add ungrouped</a>
-              <a v-if="isAdded(device)" @click="removeDevice(device)" class="button is-outlined is-danger" style="margin:5px;" data-i18n="device.delete">Delete</a>
+              <div v-if="!isAdded(device)">
+                <a @click="addDevice(device)" class="button is-success is-outlined " style="margin:5px;" data-i18n="device.add">Add</a>
+                <a @click="addDeviceUngrouped(device)" class="button is-success is-outlined " style="margin:5px;" data-i18n="device.addUngrouped">Add ungrouped</a>
+              </div>
+              <div v-else>
+                <a @click="removeDevice(device)" class="button is-outlined is-danger" style="margin:5px;" data-i18n="device.delete">Delete</a>
+              </div>
             </center>
           </div>
         </div>
@@ -185,14 +189,14 @@
           async removeDevice(device)
           {
             if (device.id in this.newPairedDevices && 'del' in this.newPairedDevices[device.id] == false){
-
               this.newPairedDevices[device.id].del = true;
 
               await Homey.api('DELETE', '/devices/delete', device, (err, result) =>
               {
                 if (err) return Homey.alert(err);
-                this.getPairedDevices();
               });
+
+              this.getPairedDevices();
             }
           },
 

@@ -1,6 +1,6 @@
 "use strict";
 
-const debug = false;
+const debug = true;
 const fs = require('fs');
 
 // Enable TCP debug
