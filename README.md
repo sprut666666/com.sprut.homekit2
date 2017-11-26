@@ -52,6 +52,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.2.1
+- Little fixes
+
 #### 2.2.0
 - Improving stability and fixes
 
