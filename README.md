@@ -52,6 +52,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.2.0
+- Improving stability and fixes
+
 #### 2.1.8
 - fix thermostat_mode
 - fix fast add/delete
