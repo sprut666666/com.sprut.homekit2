@@ -52,6 +52,10 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.2.3
+- update athom-api@2.0.88
+- Little fixes for virtual device
+
 #### 2.2.2
 - update has-node@0.3.4
 
