@@ -153,12 +153,14 @@ class HomekitApp extends Homey.App
                 console.log(device + ' - capabilitie ID change.', 'info');
                 deviceForDel.push(device);
                 addDevice = false;
+                break;
               }
             }else
             {
               console.log(device + ' - capabilitie change.', 'info');
               deviceForDel.push(device);
               addDevice = false;
+              break;
             }
           }
 
@@ -169,6 +171,7 @@ class HomekitApp extends Homey.App
               console.log(device + ' - capabilitie change.', 'info');
               deviceForDel.push(device);
               addDevice = false;
+              break;
             }
           }
         }
@@ -189,6 +192,10 @@ class HomekitApp extends Homey.App
     {
       for (let i = 0; i < deviceForDel.length; i++)
       {
+        for (let ID in newPairedDevices[deviceForDel[i]].homeKitIDs){
+          await server.config.resetHASID(newPairedDevices[deviceForDel[i]].homeKitIDs[ID]);
+        }
+        console.log(deviceForDel[i] + ' is removed!', 'success');
         delete newPairedDevices[deviceForDel[i]];
       }
     }
