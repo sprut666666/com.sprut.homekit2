@@ -10,8 +10,9 @@ const Homey = require('homey')
 const { HomeyAPI } = require('athom-api')
 const Homekit = require('./lib/homekit.js')
 
-let server = {},
-    log = [];
+var server = {};
+var newPairedDevices = {};
+let log = [];
 
 if (debug)
 {
@@ -54,7 +55,7 @@ class HomekitApp extends Homey.App
     return log;
   }
 
-  async initOldStruct(newPairedDevices)
+  async initOldStruct()
   {
     let allPairedDevices = await Homey.ManagerSettings.get('pairedDevices') || [];
     let allPairedDevicesUngrouped = await Homey.ManagerSettings.get('pairedDevicesUngrouped') || [];
@@ -122,8 +123,8 @@ class HomekitApp extends Homey.App
 
     server = await Homekit.configServer(systeminfo);
 
-    let newPairedDevices = await Homey.ManagerSettings.get('newPairedDevices') || {};
-    await this.initOldStruct(newPairedDevices);
+    newPairedDevices = await Homey.ManagerSettings.get('newPairedDevices') || {};
+    await this.initOldStruct();
 
     let deviceForDel = [];
     let allDevices = await this.getDevices();
@@ -178,7 +179,7 @@ class HomekitApp extends Homey.App
 
         if (addDevice)
         {
-          await this.addDevice(device, allDevices, newPairedDevices[device].group, newPairedDevices);
+          await this.addDevice(device, allDevices, newPairedDevices[device].group);
         }
       }
       else
@@ -214,12 +215,7 @@ class HomekitApp extends Homey.App
 
     api.devices.on('device.delete', deviceID =>
     {
-      let newPairedDevices = Homey.ManagerSettings.get('newPairedDevices') || {};
-
-      if (deviceID in newPairedDevices)
-      {
-        this.deleteDevice(deviceID, false);
-      }
+      this.deleteDevice(deviceID, false);
     });
 
   }
@@ -234,58 +230,80 @@ class HomekitApp extends Homey.App
 
 
 
-  async addDevice(device, allDevices, unGroup, newPairedDevices)
+  async addDevice(device, allDevices, group, newDevice)
   {
-    console.log(device + ' is start added!', 'success');
-    if (allDevices === undefined) allDevices = await this.getDevices();
-    if (newPairedDevices === undefined)
-    {
-      newPairedDevices = await Homey.ManagerSettings.get('newPairedDevices') || {};
-      await Homekit.createDevice(allDevices[device], server, unGroup, newPairedDevices);
 
-      await Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
-      {
-        if (err) return Homey.alert(err);
-      });
-    } else
+    if (allDevices === undefined) allDevices = await this.getDevices();
+
+    if (newDevice === undefined)
     {
-      await Homekit.createDevice(allDevices[device], server, unGroup, newPairedDevices);
+      console.log(device + ' is start added!', 'success');
+      await Homekit.createDevice(allDevices[device], server, group, newPairedDevices);
+      console.log(device + ' is added!', 'success');
     }
-    console.log(device + ' is added!', 'success');
+    else
+    {
+      if (device in newPairedDevices == false)
+      {
+        console.log(device + ' is start added!', 'success');
+
+        newPairedDevices[device] = {};
+        newPairedDevices[device].group = group;
+        newPairedDevices[device].accessory = false;
+        newPairedDevices[device].pairedСlass = allDevices[device].class;
+        newPairedDevices[device].pairedCapabilities = {};
+        newPairedDevices[device].homeKitIDs = {};
+
+        for (let capabilitie in allDevices[device].capabilities)
+        {
+          newPairedDevices[device].pairedCapabilities[capabilitie] = allDevices[device].capabilities[capabilitie].id;
+        }
+
+        await Homekit.createDevice(allDevices[device], server, group, newPairedDevices);
+
+        await Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
+        {
+          if (err) return Homey.alert(err);
+        });
+
+        console.log(device + ' is added!', 'success');
+      }
+    }
+
+    //console.log('homey.json = ' + fs.readFileSync('../userdata/homey.json', "utf8") , 'success');
   }
 
 
   async deleteDevice(device, deviceExist)
   {
-    console.log('Trying to remove device ' + device, "info");
-
-    if (deviceExist === undefined)
+    if (device in newPairedDevices)
     {
-      let allDevices = await this.getDevices();
-      await allDevices[device].removeAllListeners('$state');
+      console.log('Trying to remove device ' + device, "info");
+
+      if (deviceExist === undefined)
+      {
+        let allDevices = await this.getDevices();
+        await allDevices[device].removeAllListeners('$state');
+      }
+
+      for (let ID in newPairedDevices[device].homeKitIDs)
+      {
+        await server.removeAccessory(ID);
+        await server.config.resetHASID(newPairedDevices[device].homeKitIDs[ID]);
+        console.log('ID remove in HomeKit ' + ID, "info");
+        console.log('UUID remove in HomeKit ' + newPairedDevices[device].homeKitIDs[ID], "info");
+      }
+
+      delete newPairedDevices[device];
+
+      await Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
+      {
+        if (err) return Homey.alert(err);
+      });
+
+      console.log(device + ' is removed!', 'success');
+      //console.log('homey.json = ' + fs.readFileSync('../userdata/homey.json', "utf8") , 'success');
     }
-
-    //console.log('homey.json = ' + fs.readFileSync('../userdata/homey.json', "utf8") , 'success');
-
-    let newPairedDevices = await Homey.ManagerSettings.get('newPairedDevices') || {};
-    for (let ID in newPairedDevices[device].homeKitIDs)
-    {
-      await server.removeAccessory(ID);
-      await server.config.resetHASID(newPairedDevices[device].homeKitIDs[ID]);
-      //console.log('ID remove in HomeKit ' + ID, "info");
-      //console.log('UUID remove in HomeKit ' + newPairedDevices[device].homeKitIDs[ID], "info");
-    }
-    //console.log('homey.json = ' + fs.readFileSync('../userdata/homey.json', "utf8") , 'success');
-
-    delete newPairedDevices[device];
-
-    await Homey.ManagerSettings.set('newPairedDevices', newPairedDevices, (err, result) =>
-    {
-      if (err) return Homey.alert(err);
-    });
-
-    console.log(device + ' is removed!', 'success');
-
   }
 
 }

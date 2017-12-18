@@ -126,78 +126,32 @@
 
           async addDevice(device)
           {
-            if (device.id in this.newPairedDevices == false){
+            await Homey.api('PUT', '/devices/add', device, (err, result) =>
+            {
+              if (err) return Homey.alert(err);
+            });
 
-              this.newPairedDevices[device.id] = {};
-              this.newPairedDevices[device.id].group = true;
-              this.newPairedDevices[device.id].accessory = false;
-              this.newPairedDevices[device.id].pairedСlass = device.class;
-              this.newPairedDevices[device.id].pairedCapabilities = {};
-              this.newPairedDevices[device.id].homeKitIDs = {};
-
-              for (let capabilitie in device.capabilities)
-              {
-                this.newPairedDevices[device.id].pairedCapabilities[capabilitie] = device.capabilities[capabilitie].id;
-              }
-
-              await Homey.set('newPairedDevices', this.newPairedDevices, (err, result) =>
-              {
-                if (err) return Homey.alert(err);
-              });
-
-              await Homey.api('PUT', '/devices/add', device, (err, result) =>
-              {
-                if (err) return Homey.alert(err);
-              });
-
-              this.getPairedDevices();
-            }
-
+            this.getPairedDevices();
           },
 
           async addDeviceUngrouped(device)
           {
-            if (device.id in this.newPairedDevices == false){
+            await Homey.api('PUT', '/devices/addUngrouped', device, (err, result) =>
+            {
+              if (err) return Homey.alert(err);
+            });
 
-              this.newPairedDevices[device.id] = {};
-              this.newPairedDevices[device.id].group = false;
-              this.newPairedDevices[device.id].accessory = false;
-              this.newPairedDevices[device.id].pairedСlass = device.class;
-              this.newPairedDevices[device.id].pairedCapabilities = {};
-              this.newPairedDevices[device.id].homeKitIDs = {};
-
-              for (let capabilitie in device.capabilities)
-              {
-                this.newPairedDevices[device.id].pairedCapabilities[capabilitie] = device.capabilities[capabilitie].id;
-              }
-
-              await Homey.set('newPairedDevices', this.newPairedDevices, (err, result) =>
-              {
-                if (err) return Homey.alert(err);
-              });
-
-              await Homey.api('PUT', '/devices/addUngrouped', device, (err, result) =>
-              {
-                if (err) return Homey.alert(err);
-              });
-
-              this.getPairedDevices();
-            }
-
+            this.getPairedDevices();
           },
 
           async removeDevice(device)
           {
-            if (device.id in this.newPairedDevices && 'del' in this.newPairedDevices[device.id] == false){
-              this.newPairedDevices[device.id].del = true;
+            await Homey.api('DELETE', '/devices/delete', device, (err, result) =>
+            {
+              if (err) return Homey.alert(err);
+            });
 
-              await Homey.api('DELETE', '/devices/delete', device, (err, result) =>
-              {
-                if (err) return Homey.alert(err);
-              });
-
-              this.getPairedDevices();
-            }
+            this.getPairedDevices();
           },
 
           isAdded(obj)

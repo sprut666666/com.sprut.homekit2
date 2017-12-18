@@ -28,7 +28,7 @@ module.exports = [
     path: '/devices/add',
     fn: function(args, callback)
     {
-      Homey.app.addDevice(args.body.id,undefined,true,undefined).then(res =>
+      Homey.app.addDevice(args.body.id,undefined,true,true).then(res =>
         {
           callback(null, true);
         })
@@ -40,7 +40,7 @@ module.exports = [
     path: '/devices/addUngrouped',
     fn: function(args, callback)
     {
-      Homey.app.addDevice(args.body.id,undefined,false,undefined).then(res =>
+      Homey.app.addDevice(args.body.id,undefined,false,true).then(res =>
         {
           callback(null, true);
         })
