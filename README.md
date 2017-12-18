@@ -52,6 +52,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.3.1
+- Now the humidity accuracy is up to 0.1
+
 #### 2.3.0
 - many many many many stability =)
 - update has-node@0.4.5
