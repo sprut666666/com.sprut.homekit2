@@ -52,6 +52,11 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.3.2
+- update has-node@0.4.6
+- update athom-api@2.0.92
+- little fix
+
 #### 2.3.1
 - Now the humidity accuracy is up to 0.1
 
