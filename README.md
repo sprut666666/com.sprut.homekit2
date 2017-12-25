@@ -52,6 +52,10 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.3.4
+- update has-node@0.4.8
+- Optimization and improvements
+
 #### 2.3.3
 - Now the humidity&temperature accuracy is up to 0.01
 
