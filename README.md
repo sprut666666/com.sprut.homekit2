@@ -34,6 +34,7 @@ Now supports the types:
 - Vacuum cleaner
 - Button (simple and Play/Pause etc)
 - Doorbell button (as Motion sensor)
+- Home Alarm
 
 + Battery service for all
 
@@ -51,6 +52,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 ---
 
 ### Changelog
+
+#### 2.4.2
+- Add support Home Alarm
 
 #### 2.4.1
 - Fix status door-lock
