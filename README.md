@@ -53,6 +53,12 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.4.5
+- update has-node@0.4.13
+- update athom-api@2.0.94
+- Add consumption in Watts
+- Add total consumption in kWh
+
 #### 2.4.2
 - Add support Home Alarm
 
