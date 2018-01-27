@@ -53,6 +53,10 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.4.6
+- update athom-api@2.0.93
+- new optimization for HomeCenter
+
 #### 2.4.5
 - update has-node@0.4.13
 - update athom-api@2.0.94
