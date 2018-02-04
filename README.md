@@ -53,6 +53,10 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.4.7
+- update athom-api@2.0.96
+- new lib new-types-for-homekit@1.0.0
+
 #### 2.4.6
 - update athom-api@2.0.93
 - new optimization for HomeCenter
