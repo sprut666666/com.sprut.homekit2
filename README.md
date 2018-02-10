@@ -53,6 +53,12 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.5.0
+- update new-types-for-homekit@1.0.1
+- Add Ultraviolet Sensor
+- Add Noise Level Sensor
+- Add Atmospheric Pressure Sensor
+
 #### 2.4.7
 - update athom-api@2.0.96
 - new lib new-types-for-homekit@1.0.0
