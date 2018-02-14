@@ -53,6 +53,10 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.5.1
+- update athom-api@2.0.99
+- critical fix
+
 #### 2.5.0
 - update new-types-for-homekit@1.0.1
 - Add Ultraviolet Sensor
