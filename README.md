@@ -53,6 +53,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.5.2
+- update athom-api@2.0.105
+
 #### 2.5.1
 - update athom-api@2.0.99
 - critical fix
