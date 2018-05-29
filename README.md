@@ -53,6 +53,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.5.6
+- downgrade athom-api@2.0.108
+
 #### 2.5.5
 - update athom-api@2.0.116
 - fix RGBW
