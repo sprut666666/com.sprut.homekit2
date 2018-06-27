@@ -1,6 +1,6 @@
 {
   "name": "com.sprut.homekit",
-  "version": "2.5.6",
+  "version": "2.5.7",
   "description": "Homekit app for Homey",
   "main": "app.js",
   "scripts": {

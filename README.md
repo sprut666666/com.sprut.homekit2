@@ -53,6 +53,10 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.5.7
+- fix for aqara curtains
+- add a symbol '~' before the name of the motor and it will work vice versa
+
 #### 2.5.6
 - downgrade athom-api@2.0.108
 
