@@ -53,6 +53,10 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.6.0
+- add RotationSpeed in FAN
+- add PM2_5Density Sensor
+
 #### 2.5.8
 - fix for virtual device thermostat
 
