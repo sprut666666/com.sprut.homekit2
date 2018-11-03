@@ -53,6 +53,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 2.6.2
+- critical fix PM25Density Sensor
+
 #### 2.6.1
 - critical fix PM25Density Sensor
 
