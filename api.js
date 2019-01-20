@@ -48,11 +48,11 @@ module.exports = [
     }
   },
   {
-    method: 'DELETE',
+    method: 'PUT',
     path: '/devices/delete',
     fn: function(args, callback)
     {
-      Homey.app.deleteDevice(args.body.id).then(res =>
+      Homey.app.deleteDevice(args.body.id,undefined).then(res =>
         {
           callback(null, true);
         })
