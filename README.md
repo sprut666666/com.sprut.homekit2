@@ -53,6 +53,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 3.0.0
+- Homey 2.0 works
+
 #### 2.6.2
 - critical fix PM25Density Sensor
 

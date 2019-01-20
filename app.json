@@ -17,8 +17,8 @@
     "nl": ["homekit", "siri", "iOS"]
   },
   "category": "appliances",
-  "version": "2.6.2",
-  "compatibility": ">=1.5.0",
+  "version": "3.0.0",
+  "compatibility": ">=2.0.0",
   "author": {
     "name": "Sprut",
     "email": "sprut.1@me.com"
