@@ -53,6 +53,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 3.0.2
+- Fix thermostat
+
 #### 3.0.1
 - Fix icon & delete Device
 
