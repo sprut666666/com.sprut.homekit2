@@ -53,6 +53,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 3.0.4
+- Hot fix
+
 #### 3.0.3
 - Fix capabilities
 
