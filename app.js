@@ -2,6 +2,7 @@
 
 const debug = true;
 const fs = require('fs');
+const delay          = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // Enable TCP debug
 // process.env.DEBUG = 'TCP';
@@ -165,6 +166,30 @@ class HomekitApp extends Homey.App
 
   async onInit()
   {
+
+    this.api = await this.getApi();
+    this.pairedDevices = {};
+
+    let uptime     = (await this.api.system.getInfo()).uptime;
+
+    if (uptime < 600) {
+
+      console.log('Homey rebooted, waiting for devices to settle');
+
+      let previousDeviceCount = 0;
+
+      while (true) {
+
+        let newDeviceCount = Object.keys(await this.getDevices()).length;
+
+        if (newDeviceCount && newDeviceCount === previousDeviceCount) break;
+
+        previousDeviceCount = newDeviceCount;
+
+        await delay(60 * 1000);
+      }
+    }
+
     // Start the server
     await this.startingServer()
       .then(console.log('Homekit server starting!', 'info'))
