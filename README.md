@@ -53,6 +53,9 @@ And I [Sprut](https://github.com/sprut666666) - engaged in ongoing app developme
 
 ### Changelog
 
+#### 3.0.6
+- multi-capabilities support in 2.0
+
 #### 3.0.5
 - Hot-hot fix
 
