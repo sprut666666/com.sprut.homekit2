@@ -1,5 +1,5 @@
 const expect  = require('chai').expect;
-const ExtendedBuffer = require('../src/extended-buffer');
+const ExtendedBuffer = require('../index');
 
 describe('buffer.readUInt16LE()', function () {
     it('Test #1', function() {

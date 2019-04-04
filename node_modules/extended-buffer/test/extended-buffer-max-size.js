@@ -1,5 +1,5 @@
 const expect  = require('chai').expect;
-const ExtendedBuffer = require('../src/extended-buffer');
+const ExtendedBuffer = require('../index');
 
 describe('ExtendedBuffer.getMaxSize()', function () {
     it('ExtendedBuffer.getMaxSize() equal require(\'buffer\').kMaxLength', function() {

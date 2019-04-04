@@ -64,7 +64,7 @@ class HomekitApp extends Homey.App
     // Get system info
     let systeminfo = await api.system.getInfo();
     // Subscribe to realtime events and set all devices global
-    await api.devices.subscribe();
+    //await api.devices.subscribe();
 
     server = await Homekit.configServer(systeminfo);
 
@@ -172,8 +172,8 @@ class HomekitApp extends Homey.App
 
     let uptime     = (await this.api.system.getInfo()).uptime;
 
-    if (uptime < 600) {
-
+    if (uptime < 1200)
+    {
       console.log('Homey rebooted, waiting for devices to settle');
 
       let previousDeviceCount = 0;
