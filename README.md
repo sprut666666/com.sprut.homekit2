@@ -1,6 +1,6 @@
 # HomeKit for Homey
 
-![Image of paircode](https://github.com/sprut666666/graphics/blob/master/homekit/code.png)
+![Image of paircode](https://github.com/sprut666666/com.sprut.homekit2/blob/master/code.png)
 
 After Homey is paired, go to "settings" -> "HomeKit". There select the devices you want to pair with "HomeKit" and wait =)
 Example of work: https://www.youtube.com/watch?v=yZWt6jDCl7E (New video from Homey the work)
