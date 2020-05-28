@@ -1,8 +1,8 @@
-var curve = require("bindings")("curve");
+const curve = require('bindings')('curve');
 
-var buf1 = new Buffer(64);
-var buf2 = new Buffer(64);
-var buf3 = new Buffer(64);
+const buf1 = new Buffer.alloc(64);
+const buf2 = new Buffer.alloc(64);
+const buf3 = new Buffer.alloc(64);
 console.log(buf1.toString('base64'));
-curve.curve(buf1,buf2,buf3);
+curve.curve(buf1, buf2, buf3);
 console.log(buf1.toString('base64'));

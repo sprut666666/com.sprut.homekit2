@@ -15,6 +15,7 @@
     "athom-api": "^3.2.3",
     "has-node": "^0.4.14",
     "chacha-native": "git+https://github.com/calvinmetcalf/chacha-native.git",
+    "ed25519": "git+https://github.com/gaoxiangxyz/ed25519.git",
     "new-types-for-homekit": "git+https://github.com/sprut666666/new-types-for-homekit.git"
   }
 }
