@@ -9,7 +9,7 @@
   "author": "Sprut",
   "license": "ISC",
   "dependencies": {
-    "athom-api": "^2.1.179",
+    "athom-api": "^3.2.3",
     "has-node": "^0.4.14",
     "new-types-for-homekit": "git+https://github.com/sprut666666/new-types-for-homekit.git"
   }
