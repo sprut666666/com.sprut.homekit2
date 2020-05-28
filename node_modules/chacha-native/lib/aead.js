@@ -18,7 +18,7 @@ AEAD.prototype._update = function (data) {
   return this.binding.update(data);
 };
 
-AEAD.prototype._final = function () {
+AEAD.prototype.__final = function () {
   if (this._decrypt && !this._tag) {
     throw new Error('invalid state');
   }

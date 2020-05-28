@@ -52,17 +52,17 @@ CipherBase.prototype._transform = function (data, _, next) {
 };
 CipherBase.prototype._flush = function (next) {
   try {
-    this.push(this._final());
+    this.push(this.__final());
   } catch(e) {
     return next(e);
   }
   next();
 };
 function finalFunc (outputEnc) {
-  var outData = this._final() || new Buffer('');
+  var outData = this.__final() || new Buffer('');
   if (outputEnc) {
     outData = outData.toString(outputEnc);
   }
   return outData;
 };
-CipherBase.prototype._final = function () {};
+CipherBase.prototype.__final = function () {};

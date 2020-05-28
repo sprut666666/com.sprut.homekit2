@@ -5,7 +5,7 @@
 #include "legacy.h"
 using namespace v8;
 
-void InitAll(Handle<Object> exports) {
+void InitAll(Local<Object> exports) {
   Chacha::Init(exports);
   Poly::Init(exports);
   AEAD::Init(exports);

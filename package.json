@@ -8,9 +8,13 @@
   },
   "author": "Sprut",
   "license": "ISC",
+  "engines": {
+    "node": ">=10.17.0"
+  },
   "dependencies": {
     "athom-api": "^3.2.3",
     "has-node": "^0.4.14",
+    "chacha-native": "git+https://github.com/calvinmetcalf/chacha-native.git",
     "new-types-for-homekit": "git+https://github.com/sprut666666/new-types-for-homekit.git"
   }
 }

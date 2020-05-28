@@ -16,6 +16,6 @@ PolyStream.prototype._update = function (data) {
   this.binding.update(data);
 };
 
-PolyStream.prototype._final = function () {
+PolyStream.prototype.__final = function () {
   return this.binding.finish();
 };

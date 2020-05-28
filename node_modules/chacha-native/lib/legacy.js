@@ -22,7 +22,7 @@ AEAD.prototype._update = function (data) {
   return this.binding.update(data);
 };
 
-AEAD.prototype._final = function () {
+AEAD.prototype.__final = function () {
   if (!this._aadAdded) {
     this.setAAD(new Buffer(''));
   }
